@@ -6,23 +6,14 @@ sdk: org.gnome.Sdk
 command: dino
 finish-args:
   - "--share=ipc"
-  - "--socket=fallback-x11"
-  - "--socket=x11"
+  - "--socket=x11" # for whatever reason breaks with fallback-x11 on GNOME on Wayland
   - "--socket=wayland"
   - "--socket=pulseaudio"
   - "--share=network"
-  - "--device=all"
-  - "--system-talk-name=org.freedesktop.timedate1"
-  - "--system-talk-name=org.freedesktop.Accounts"
-  - "--filesystem=/var/lib/AccountsService/icons:ro"
-  - "--add-policy=Tracker3.dbus:org.freedesktop.Tracker3.Miner.Files=tracker:Software"
-  - "--talk-name=org.gnome.ControlCenter"
+  - "--device=all" # required for audio/video calling
   - "--talk-name=org.freedesktop.secrets"
-  - "--filesystem=xdg-run/dconf"
-  - "--filesystem=~/.config/dconf:ro"
-  - "--filesystem=host"
-  - "--talk-name=ca.desrt.dconf"
-  - "--env=DCONF_USER_CONFIG_DIR=.config/dconf"
+  - "--talk-name=org.gtk.vfs.*"
+  - "--filesystem=xdg-run/gvfsd"
 modules:
   - name: gspell
     cleanup:
@@ -42,6 +33,8 @@ modules:
         tag: v2.3.3
   - name: qrencode
     buildsystem: cmake-ninja
+    cleanup:
+      - /bin
     config-opts:
       - -DCMAKE_C_FLAGS=-fPIC
     sources:
